@@ -1,45 +1,44 @@
 
+//declare global variables
 int greenled = 12;
 int blueled = 11;
 int redled = 10;
 int sensorpin = A0;
 
 void setup() {
-  // put your setup code here, to run once:
+  // initalize inputs and outputs
 pinMode(greenled, OUTPUT);
 pinMode(blueled, OUTPUT);
 pinMode(redled, OUTPUT);
-
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // nested if and else statements to fade lights according to photonic reception
 if (analogRead(sensorpin) <= 50) {
-  //digitalWrite(blueled, HIGH);
   ledfading(blueled);
 }
 
 else if (analogRead(sensorpin) > 50 && analogRead(sensorpin) < 100) {
-  //digitalWrite(redled, HIGH);
   ledfading(redled);
 }
 
 else {//if (analogRead(sensorpin) >= 200) {
-  //digitalWrite(greenled, HIGH);
   ledfading(greenled);
 }
 
 }
-
+//function using for loops to fade led's
 void ledfading(int led) {
   int i = 0;
   for (i; i <= 255; i += 15) {
     analogWrite(led, i);
+    //delay to see dimming effect
     delay(30);
   }
 
   for (i; i >= 0; i -= 15)  {
     analogWrite(led, i);
+    //delay to see dimming effect
     delay(30);
   }
 }
