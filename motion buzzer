@@ -1,0 +1,38 @@
+//intialize global variables
+int led = 9;
+int trigpin = 13;
+int echopin = 11;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(led, OUTPUT);
+  pinMode(trigpin, OUTPUT);
+  pinMode(echopin, INPUT);
+}
+
+void loop() {
+  //Allow the ultrasonic sensor to emit soundwaves to detect distance
+  long distance, duration;
+  digitalWrite(trigpin, HIGH);
+  delayMicroseconds(1000);
+  digitalWrite(trigpin, LOW);
+  duration = pulseIn(echopin, HIGH);
+  distance = convertCM(duration);
+
+  if (distance <= 10) {
+    //if distance less than or equal to 10 cm, turn on led 
+    digitalWrite(led, HIGH);
+    //alarm buzzer at port 12 (arduino), 20 Hz, and function for 2 seconds
+    tone(12, 20, 2000);
+  }
+  else if (distance > 10) {
+    //if distance greater than 10 cm, turn off led
+    digitalWrite(led, LOW);
+    //statement for sound buzzer not required
+  }
+  
+}
+//converts the time the sound waves returns to the echopin and converts that into a distance of centimeters
+long convertCM (long microseconds) {
+  return microseconds / 2 / 29;
+}
