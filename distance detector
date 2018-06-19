@@ -1,0 +1,77 @@
+#include <LiquidCrystal.h>
+
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+int led = 8;
+int led1 = 7;
+int led2 = 6;
+int trigpin = 9;
+int echopin = 10;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(led, OUTPUT);
+  pinMode(trigpin, OUTPUT);
+  pinMode(echopin, INPUT);
+  lcd.begin(16, 2);
+}
+
+void loop() {
+  //Allow the ultrasonic sensor to emit soundwaves to detect distance
+  long distance, duration;
+  digitalWrite(trigpin, HIGH);
+  delayMicroseconds(1000);
+  digitalWrite(trigpin, LOW);
+  duration = pulseIn(echopin, HIGH);
+  distance = convertCM(duration);
+
+  if (distance <= 10) {
+    //if distance less than or equal to 10 cm, turn on led 
+    char color[20] = "Blue";
+    ledfading(led);
+    print(color, distance);
+    
+  }
+  else if (distance > 10 && distance < 20) {
+    //if distance greater than 10 cm, turn off led
+    char color[20] = "Red";
+    ledfading(led1);
+    print(color, distance);
+  }
+  else if (distance >= 20) {
+    char color[20] = "Green";
+    ledfading(led2);
+    print(color, distance);
+  }
+  
+}
+//converts the time the sound waves returns to the echopin and converts that into a distance of centimeters
+long convertCM (long microseconds) {
+  return microseconds / 2 / 29;
+}
+
+void ledfading(int LED) {
+  int i = 0;
+  for (i; i <= 255; i += 15) {
+    analogWrite(LED, i);
+    //delay to see dimming effect
+    delay(30);
+  }
+
+  for (i; i >= 0; i -= 15)  {
+    analogWrite(LED, i);
+    //delay to see dimming effect
+    delay(30);
+  }
+}
+
+void print(char led[], double d) {
+    lcd.setCursor(0, 0);
+    lcd.print("Color: ");
+    lcd.print(led);
+    lcd.setCursor(0,1);
+    lcd.print("Distance: ");
+    lcd.print(d);
+    lcd.print(" CM");
+}
